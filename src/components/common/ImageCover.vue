@@ -91,15 +91,6 @@
 .container {
    display: flex;   
     overflow-y: hidden;
-
-  /* display: flex;
-    overflow-x: auto; */
-  /* display: grid;
-  height: 100%;
-  gap: 10px;
-  grid-auto-columns: minmax(8rem, auto);
-  grid-auto-flow: column;
-  overflow-x: scroll; */
 }
 
 /* Custom, iPhone Retina */ 
