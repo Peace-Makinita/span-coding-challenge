@@ -2,7 +2,7 @@
   <v-app>
     <v-app-bar app color="primary" dark>
       <div class="d-flex align-center">
-        <button @click="handleDrawer">Call Method in child</button>
+        <button @click="handleDrawer">Menu</button>
       </div>
     </v-app-bar>
 

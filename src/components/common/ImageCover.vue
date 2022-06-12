@@ -1,61 +1,67 @@
 <template>
   <div>
     <h3 class="category-list-name">{{ category }}</h3>
-    <p class="description">{{ description }}</p>
+    <p class="description">
+      {{ description }} infinityLoop - {{ infinityLoop }}
+    </p>
     <v-container class="container m-0">
       <div class="slide-button slide-button-right">
         <v-icon color="black" class="icon-chevron" large @click="right">
           mdi-chevron-right
         </v-icon>
-        <!-- <span class="scroll-btn">scroll right</span> -->
       </div>
-      <div
-        class="slide-button slide-button-left"
-        @click="left"
-        v-if="infinityLoop"
-      >
+      <div class="slide-button slide-button-left" v-if="infinityLoop">
         <v-icon color="black" class="icon-chevron" large @click="left">
           mdi-chevron-left
         </v-icon>
       </div>
-      <div
-        class="showcase"
-        ref="showcase"
-        v-on:mouseout="hideShowcase"
-        :class="{ expand: expandShowcase }"
-      ></div>
       <div class="slider-wrapper" ref="wrapper">
         <transition-group class="slider" tag="div" name="list">
           <div
             class="slide-container"
-            v-for="(container, slideContainerIndex) in slideContainer"
+            v-for="container in slideContainer"
             :key="container"
-            :class="[slideContainerIndex % 3 === 1 ? 'middle' : '']"
-            v-on:transitionend="containerTransition"
           >
             <div
               class="slide image-spacer"
               v-for="(content, contentIndex) in contentContainer[container]"
               :key="contentIndex"
               ref="slides"
-              :mouseover="{
-                position: slideContainerIndex % 3,
-                handler: selectSlide,
-              }"
-              :mouseout="{
-                position: slideContainerIndex % 3,
-                handler: unselectSlide,
-              }"
-              :id="'slide-' + container + '-' + contentIndex"
-              :data-container-index="slideContainerIndex"
               :data-content-index="contentIndex"
+              @click="viewImageInfo(content, contentIndex)"
             >
-              {{ content }}
+              <img :src="content" />
             </div>
           </div>
         </transition-group>
       </div>
     </v-container>
+
+    <template>
+      <v-row justify="center">
+        <v-dialog v-model="dialog" persistent max-width="290">
+          <!-- <template v-slot:activator="{ on, attrs }">
+            <v-btn color="primary" dark v-bind="attrs" v-on="on">
+              Open Dialog
+            </v-btn>
+          </template> -->
+          <v-card>
+            <v-card-title class="text-h5"> display information </v-card-title>
+            <v-card-text>
+              <p>display information for each selected image.</p>
+              <p>{{ urlTest }}</p>
+              <p>{{ indexTest }}</p>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="green darken-1" text @click="dialog = false">
+                Okay
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-row>
+    </template>
   </div>
 </template>
 
@@ -75,7 +81,6 @@ export default {
   },
   data() {
     return {
-      bodyMarginLeft: document.body.getBoundingClientRect().left,
       expandShowcase: false,
       timeoutID: "",
       ratio: 1.6,
@@ -85,17 +90,54 @@ export default {
       contentContainer: [],
       contentContainerSize: 6,
       contentData: [
-        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-        21, 22, 23, 24,
+        "https://source.unsplash.com/random/200x200?sig=1",
+        "https://source.unsplash.com/random/200x200?sig=2",
+        "https://source.unsplash.com/random/200x200?sig=3",
+        "https://source.unsplash.com/random/200x200?sig=4",
+        "https://source.unsplash.com/random/200x200?sig=5",
+        "https://source.unsplash.com/random/200x200?sig=6",
+        "https://source.unsplash.com/random/200x200?sig=7",
+        "https://source.unsplash.com/random/200x200?sig=8",
+        "https://source.unsplash.com/random/200x200?sig=9",
+        "https://source.unsplash.com/random/200x200?sig=10",
+        "https://source.unsplash.com/random/200x200?sig=11",
+        "https://source.unsplash.com/random/200x200?sig=12",
+        "https://source.unsplash.com/random/200x200?sig=13",
+        "https://source.unsplash.com/random/200x200?sig=23",
+        "https://source.unsplash.com/random/200x200?sig=33",
+        "https://source.unsplash.com/random/200x200?sig=1",
+        "https://source.unsplash.com/random/200x200?sig=132",
+        "https://source.unsplash.com/random/200x200?sig=3",
+        "https://source.unsplash.com/random/200x200?sig=1",
+        "https://source.unsplash.com/random/200x200?sig=2",
+        "https://source.unsplash.com/random/200x200?sig=3",
+        "https://source.unsplash.com/random/200x200?sig=1",
+        "https://source.unsplash.com/random/200x200?sig=2",
+        "https://source.unsplash.com/random/200x200?sig=3",
+        "https://source.unsplash.com/random/200x200?sig=1",
+        "https://source.unsplash.com/random/200x200?sig=2",
+        "https://source.unsplash.com/random/200x200?sig=3",
+        "https://source.unsplash.com/random/200x200?sig=1",
+        "https://source.unsplash.com/random/200x200?sig=2",
+        "https://source.unsplash.com/random/200x200?sig=3",
+        "https://source.unsplash.com/random/200x200?sig=1",
+        "https://source.unsplash.com/random/200x200?sig=2",
+        "https://source.unsplash.com/random/200x200?sig=3",
       ],
       infinityLoop: false,
+      topicName: "digital-nomad",
+      dialog: false,
+      urlTest: "",
+      indexTest: null,
     };
   },
   methods: {
     left: _.debounce(function slideLeft() {
+      ///debugger;
       if (!this.expandShowcase) {
-        this.isSliding = true;
+        this.isSliding = false;
         // Infinity loop
+        console.log("this.slideContainer", this.slideContainer);
         if (this.slideContainer[0] === 0) {
           const page = this.contentContainer.length - 1;
           this.slideContainer.unshift(page);
@@ -103,7 +145,7 @@ export default {
           this.slideContainer.unshift(this.slideContainer[0] - 1);
         }
         this.slideContainer.pop();
-        this.setColor(this.slideContainer[0]);
+        // this.setColor(this.slideContainer[0]);
       }
     }, 500),
     right: _.debounce(function slideRight() {
@@ -112,6 +154,7 @@ export default {
         _.last(this.slideContainer) < this.contentContainer.length
       ) {
         this.isSliding = true;
+        // this.$store.commit("SET_INFINIT_LOOP", true);
         this.infinityLoop = true;
         // Infinity loop
         if (_.last(this.slideContainer) === this.contentContainer.length - 1) {
@@ -122,118 +165,13 @@ export default {
           this.slideContainer.push(_.last(this.slideContainer) + 1);
         }
         this.slideContainer.shift();
-        this.setColor(_.last(this.slideContainer));
+        // this.setColor(_.last(this.slideContainer));
       }
     }, 500),
-    selectSlide(event) {
-      this.timeoutID = setTimeout(() => {
-        if (!this.isSliding && !this.expandShowcase) {
-          const selectedSlide = event.target;
-          this.selectedSlidePos = this.slideIsFirstOrLast(selectedSlide);
-          const transitionDistance = this.transitionDistance(selectedSlide);
-          const selectedContainer = this.containerIndex(selectedSlide);
-          this.popShowcase(selectedSlide);
-          const animationCallback = (currentSlide) => {
-            if (currentSlide !== selectedSlide) {
-              const currentContainer = this.containerIndex(currentSlide);
-              let direction = 0;
-              if (this.selectedSlidePos.isFirst) {
-                if (currentContainer >= 1) {
-                  direction = 1;
-                }
-              } else if (this.selectedSlidePos.isLast) {
-                if (currentContainer <= 1) {
-                  direction = -1;
-                }
-              } else if (currentContainer === selectedContainer) {
-                direction =
-                  this.contentIndex(currentSlide) <
-                  this.contentIndex(selectedSlide)
-                    ? 1
-                    : -1;
-              } else {
-                direction = currentContainer < 1 ? 1 : -1;
-              }
-              this.setStyleProperty(currentSlide, {
-                transform: `translateX(${transitionDistance * direction}px)`,
-              });
-            }
-          };
-          this.animateSlideTransition(animationCallback);
-        }
-      }, 500);
-    },
-    unselectSlide() {
-      clearTimeout(this.timeoutID);
-    },
-    containerIndex(element) {
-      return element.dataset.containerIndex * 1;
-    },
-    contentIndex(element) {
-      return element.dataset.contentIndex * 1;
-    },
-    slideIsFirstOrLast(element) {
-      return {
-        isFirst: this.slideIsFirst(element),
-        isLast: this.slideIsLast(element),
-      };
-    },
-    slideIsFirst(element) {
-      return this.contentIndex(element) === 0;
-    },
-    slideIsLast(element) {
-      const containerIndex = this.containerIndex(element);
-      return (
-        this.contentIndex(element) ===
-        this.contentContainer[containerIndex].length - 1
-      );
-    },
-    transitionDistance(element) {
-      if (this.selectedSlidePos.isFirst || this.selectedSlidePos.isLast) {
-        return element.clientWidth * (this.ratio - 1);
-      }
-      return element.clientWidth * ((this.ratio - 1) / -2);
-    },
-    animateSlideTransition(callback) {
-      this.$refs.slides.forEach((slide) => {
-        callback(slide);
-      });
-    },
-    containerTransition() {
-      // Triggered by 'transitionend' event from slider container
-      this.isSliding = false;
-    },
-    popShowcase(selectedSlide) {
-      const selectedRect = selectedSlide.getBoundingClientRect();
-      const showcaseWidth = selectedRect.left - this.bodyMarginLeft;
-      const showcaseStyle = {
-        left: `${showcaseWidth}px`,
-        width: `${selectedRect.width}px`,
-        height: `${selectedRect.height}px`,
-        "background-color": `${selectedSlide.style.backgroundColor}`,
-      };
-      let transformOrigin = "center center";
-      if (this.selectedSlidePos.isFirst) {
-        transformOrigin = "center left";
-      } else if (this.selectedSlidePos.isLast) {
-        transformOrigin = "center right";
-      }
-      Object.assign(showcaseStyle, { "transform-origin": transformOrigin });
-      this.setStyleProperty(this.$refs.showcase, showcaseStyle);
-      this.expandShowcase = true;
-    },
-    hideShowcase(event) {
-      if (event.currentTarget.classList.contains("expand")) {
-        this.expandShowcase = false;
-        this.animateSlideTransition((currentSlide) => {
-          this.setStyleProperty(currentSlide, { transform: "" });
-        });
-      }
-    },
-    resetContentContainer() {
-      this.setContentContainer();
-      this.updateContentContainer();
-    },
+    // resetContentContainer() {
+    //   this.setContentContainer();
+    //   this.updateContentContainer();
+    // },
     setContentContainer() {
       if (window.matchMedia("(max-width: 480px)").matches) {
         this.contentContainerSize = 2;
@@ -251,58 +189,82 @@ export default {
     },
     updateContentContainer() {
       this.slideContainer = [-1, 0, 1];
-      this.setColor(this.slideContainer[0]);
-      this.setColor(this.slideContainer[1]);
-      this.setColor(this.slideContainer[2]);
+      // this.setColor(this.slideContainer[0]);
+      // this.setColor(this.slideContainer[1]);
+      // this.setColor(this.slideContainer[2]);
     },
-    setColor(containerIndex, callback) {
-      // Helper function for the demo
-      if (
-        containerIndex > -1 &&
-        containerIndex < this.contentContainer.length
-      ) {
-        this.$nextTick(() => {
-          this.contentContainer[containerIndex].forEach(
-            (content, contentIndex) => {
-              const slideID = `#slide-${containerIndex}-${contentIndex}`;
-              const slide = this.$el.querySelector(slideID);
-              const offset = contentIndex * 7;
-              const hue = (containerIndex * 20) % 360;
-              this.setStyleProperty(slide, {
-                "background-color": `hsl(${hue},${40 + offset}%,${
-                  50 + offset
-                }%)`,
-              });
-            }
-          );
-          if (callback) {
-            callback();
-          }
-        });
+    // setColor(containerIndex, callback) {
+    //   // Helper function for the demo
+    //   if (
+    //     containerIndex > -1 &&
+    //     containerIndex < this.contentContainer.length
+    //   ) {
+    //     this.$nextTick(() => {
+    //       this.contentContainer[containerIndex].forEach(
+    //         (content, contentIndex) => {
+    //           const slideID = `#slide-${containerIndex}-${contentIndex}`;
+    //           const slide = this.$el.querySelector(slideID);
+    //           const offset = contentIndex * 7;
+    //           const hue = (containerIndex * 20) % 360;
+    //           // this.setStyleProperty(slide, {
+    //           //   "background-color": `hsl(${hue},${40 + offset}%,${
+    //           //     50 + offset
+    //           //   }%)`,
+    //           // });
+    //         }
+    //       );
+    //       if (callback) {
+    //         callback();
+    //       }
+    //     });
+    //   }
+    // },
+    // setStyleProperty(element, styles) {
+    //   Object.assign(element.style, styles);
+    // },
+    viewImageInfo(item, index) {
+      this.urlTest = item;
+      this.indexTest = index;
+      this.dialog = true;
+
+      if (!this.dialog) {
+        this.urlTest = "";
+        this.indexTest = null;
       }
-    },
-    setStyleProperty(element, styles) {
-      Object.assign(element.style, styles);
+      console.log("item", item, "index", index);
     },
   },
   mounted() {
     this.$el.style.setProperty("--ratio", `${this.ratio}`);
-    this.slideContainer.forEach((container) => {
-      this.setColor(container);
-    });
-    window.addEventListener(
-      "resize",
-      _.debounce(this.resetContentContainer, 150)
-    );
+    // this.slideContainer.forEach((container) => {
+    //   this.setColor(container);
+    // });
+    // window.addEventListener(
+    //   "resize",
+    //   _.debounce(this.resetContentContainer, 150)
+    // );
   },
   destroyed() {
-    window.removeEventListener(
-      "resize",
-      _.debounce(this.resetContentContainer, 150)
-    );
+    // window.removeEventListener(
+    //   "resize",
+    //   _.debounce(this.resetContentContainer, 150)
+    // );
   },
-  created() {
+  async created() {
     this.setContentContainer();
+    try {
+      await this.$store.dispatch("fetchPhotos", this.topicName);
+    } catch (error) {
+      console.log("error in components");
+    }
+  },
+  computed: {
+    getImageList() {
+      return this.$store.state.photos;
+    },
+    // infinityLoop() {
+    //   return this.$store.state.infinityLoop;
+    // },
   },
 };
 </script>
@@ -346,18 +308,11 @@ $slider-width: $slider-container-width * 3;
 /* Slider buttoms */
 .slide-button {
   width: $button-width;
-  height: slide-height(slide-width(6));
+  //height: slide-height(slide-width(9));
   // background-color: white;
   // opacity: 0.6;
   position: absolute;
-  // z-index: 10;
-}
-.slide-button > .fa {
-  color: grey;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  //z-index: 10;
 }
 .slide-button.slide-button-left {
   left: 0;
@@ -365,21 +320,6 @@ $slider-width: $slider-container-width * 3;
 .slide-button.slide-button-right {
   right: 0;
 }
-/* Showcase */
-.showcase {
-  position: absolute;
-  visibility: hidden;
-  transition: transform var(--duration) var(--cubic-bezier),
-    visibility 0s calc(var(--duration));
-  will-change: transform, visibility;
-  z-index: 10;
-}
-.showcase.expand {
-  transform: scale(var(--ratio), var(--ratio));
-  visibility: visible;
-  transition: transform var(--duration) var(--cubic-bezier);
-}
-/* Slider */
 .slider-wrapper {
   overflow: hidden;
 }
@@ -403,11 +343,15 @@ $slider-width: $slider-container-width * 3;
 }
 .slide {
   width: slide-width(6);
-  height: slide-height(slide-width(6));
+  height: slide-height(slide-width(4));
   transition: transform var(--duration) var(--cubic-bezier);
   will-change: transform;
   // box-sizing: border-box;
 }
+
+// .slide.image-spacer:hover {
+//   border: 4px solid rgba(255, 0, 0, 0.5);
+// }
 /* Slider Transition*/
 .list-enter,
 .list-leave-to {
@@ -428,7 +372,7 @@ $slider-width: $slider-container-width * 3;
 //fix this
 .icon-chevron {
   padding: 0;
-  margin: 3rem 0 0 1rem;
+  margin: 74px 0;
 }
 
 .category-list-name {
@@ -459,7 +403,35 @@ $slider-width: $slider-container-width * 3;
     height: slide-height(slide-width(3));
   }
   .slide-button {
+    color: white;
+    width: slide-width(9);
+    // width: 9vw;
     height: slide-height(slide-width(3));
+  }
+
+  button.v-icon.notranslate.icon-chevron.v-icon--link.mdi.mdi-chevron-right.theme--light.black--text {
+    background-color: black;
+    opacity: 0.4;
+  }
+
+  button.v-icon.notranslate.icon-chevron.v-icon--link.mdi.mdi-chevron-left.theme--light.black--text {
+    color: white !important;
+    background-color: black;
+    opacity: 0.4;
+  }
+
+  .slide.image-spacer {
+    margin: 0 0.7rem;
+  }
+  .icon-chevron {
+    padding: 0;
+    margin: 2.5rem 0px;
+  }
+
+  .description {
+    margin: 0 1.7rem;
+    display: flex;
+    text-align: center;
   }
 }
 @include xs-screen {

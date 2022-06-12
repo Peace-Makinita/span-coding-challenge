@@ -66,12 +66,6 @@ export default {
     }
   },
   computed: {
-    movies() {
-      return this.$store.getters.movies;
-    },
-    genres() {
-      return this.$store.getters.genres;
-    },
     getTopicList() {
       return this.$store.state.topics;
     },
