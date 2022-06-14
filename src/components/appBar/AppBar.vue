@@ -5,8 +5,8 @@
       <v-toolbar-title>Span Coding Challenge</v-toolbar-title>
       <v-spacer></v-spacer>
     </v-app-bar>
-    <v-container class="mt-9">
-      <Search class="mt-15" />
+    <v-container class="mt-15">
+      <Search class="mt-16" />
       <Carousel />
       <Carousel />
       <Carousel />
