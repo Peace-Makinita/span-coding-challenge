@@ -1,36 +1,18 @@
 <template>
   <v-app>
-    <v-app-bar app color="primary" dark>
-      <div class="d-flex align-center">
-        <button @click="handleDrawer">Menu</button>
-      </div>
-    </v-app-bar>
-
-    <v-main class="navigation-wrapper">
-      <NavigationDrawer ref="openNavigationRef" />
-    </v-main>
+    <AppBar />
   </v-app>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld";
-import NavigationDrawer from "./components/navigation/NavigationDrawer";
+import AppBar from "./components/appBar/AppBar.vue";
 
 export default {
   name: "App",
 
   components: {
-    HelloWorld,
-    NavigationDrawer,
+    AppBar,
   },
   data: () => ({}),
-  methods: {
-    handleDrawer() {
-      this.$refs.openNavigationRef.isDrawerShowing();
-    },
-    // openNavigation(message) {
-    //   console.log('message from child', message);
-    // }
-  },
 };
 </script>

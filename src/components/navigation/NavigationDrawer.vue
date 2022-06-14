@@ -1,22 +1,9 @@
 <template>
   <div>
-    <ImageCover
-      category="Cars"
-      description="Watch all the exciting content content about cars"
-    />
-    <ImageCover
-      category="Food"
-      description="Are you a foodie? you'll enjoy this content"
-    />
-    <ImageCover
-      category="Music"
-      description="Watch and listen to music all the exciting content about music"
-    />
-
     <v-navigation-drawer v-model="drawer" absolute temporary>
       <v-list-item>
         <v-list-item-content>
-          <v-list-item-title>SPAN CODING CHALLENGE</v-list-item-title>
+          <v-list-item-title>List of topics</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
 
@@ -84,9 +71,3 @@ export default {
   z-index: 10;
 }
 </style>
-
-<!-- /* 320px — 480px: Mobile devices
-481px — 768px: iPads, Tablets
-769px — 1024px: Small screens, laptops
-1025px — 1200px: Desktops, large screens
-1201px and more —  Extra large screens, TV */ -->
