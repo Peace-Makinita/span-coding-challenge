@@ -9,6 +9,9 @@ const store = new Vuex.Store({
     photos: [],
     isResponseOkay: false,
     infinityLoop: false,
+    isLoading: false,
+    isOverlay: false,
+    searchValue: "",
   },
 
   getters: {
@@ -16,40 +19,44 @@ const store = new Vuex.Store({
     getPhotos: (state) => state.photos,
     getIsResponseOkay: (state) => state.isResponseOkay,
     getInfinityLoop: (state) => state.infinityLoop,
+    getIsLoading: (state) => state.isLoading,
+    getIsOverlay: (state) => state.isOverlay,
+    getSearchValue: (state) => state.searchValue,
   },
 
   actions: {
-    // fetchTopics({ commit }) {
-    //     const url = 'https://api.unsplash.com/topics/?client_id=ucVVGtioEDaoporFMI1stcwOGSFRWE_qZ0hsOjQG9EY'
-
-    //     return new Promise((resolve, reject) => {
-    //         axios.get(url).then((response) => {
-    //                 if (response?.data) {
-    //                     commit('SET_TOPICS', response.data)
-    //                     commit('SET_RESPONSE_OKAY', true)
-    //                     resolve(response.data)
-    //                 } else {
-    //                     commit('SET_TOPICS', [])
-    //                     commit('SET_RESPONSE_OKAY',  false)
-    //                     reject(error)
-    //                 }
-
-    //         }).catch((error) => {
-    //             commit('SET_RESPONSE_OKAY',  false)
-    //             reject(error)
-    //         })
-    //     })
-    //   },
-
-    fetchPhotos({ commit }, topicName) {
-      // const url = `https://api.unsplash.com/topics/${topicName}/photos/?client_id=ucVVGtioEDaoporFMI1stcwOGSFRWE_qZ0hsOjQG9EY`;
+    fetchTopics({ commit }) {
+      const url =
+        "https://api.unsplash.com/topics/?client_id=ucVVGtioEDaoporFMI1stcwOGSFRWE_qZ0hsOjQG9EY";
 
       return new Promise((resolve, reject) => {
         axios
           .get(url)
           .then((response) => {
             if (response?.data) {
-              console.log("i get images?", response);
+              commit("SET_TOPICS", response.data);
+              commit("SET_RESPONSE_OKAY", true);
+              resolve(response.data);
+            } else {
+              commit("SET_TOPICS", []);
+              commit("SET_RESPONSE_OKAY", false);
+              reject(error);
+            }
+          })
+          .catch((error) => {
+            commit("SET_RESPONSE_OKAY", false);
+            reject(error);
+          });
+      });
+    },
+
+    fetchPhotos({ commit }, topicName) {
+      const url = `https://api.unsplash.com/topics/${topicName}/photos/?client_id=ucVVGtioEDaoporFMI1stcwOGSFRWE_qZ0hsOjQG9EY`;
+      return new Promise((resolve, reject) => {
+        axios
+          .get(url)
+          .then((response) => {
+            if (response?.data) {
               commit("SET_PHOTOS", response.data);
               commit("SET_RESPONSE_OKAY", true);
               resolve(response.data);
@@ -65,36 +72,6 @@ const store = new Vuex.Store({
           });
       });
     },
-
-    fetchTopics({ commit }) {
-      commit("SET_TOPICS", [
-        { title: "Food" },
-        { title: "Cars" },
-        { title: "Animals" },
-        { title: "Sea" },
-        { title: "Ocean" },
-        { title: "House" },
-      ]);
-      //const url = 'https://api.unsplash.com/topics/?client_id=ucVVGtioEDaoporFMI1stcwOGSFRWE_qZ0hsOjQG9EY'
-
-      // return new Promise((resolve, reject) => {
-      //     axios.get(url).then((response) => {
-      //             if (response?.data) {
-      //                 commit('SET_TOPICS', response.data)
-      //                 commit('SET_RESPONSE_OKAY', true)
-      //                 resolve(response.data)
-      //             } else {
-      //                 commit('SET_TOPICS', [])
-      //                 commit('SET_RESPONSE_OKAY',  false)
-      //                 reject(error)
-      //             }
-
-      //     }).catch((error) => {
-      //         commit('SET_RESPONSE_OKAY',  false)
-      //         reject(error)
-      //     })
-      // })
-    },
   },
 
   mutations: {
@@ -109,6 +86,15 @@ const store = new Vuex.Store({
     },
     SET_INFINIT_LOOP(state, infinityLoop) {
       state.infinityLoop = infinityLoop;
+    },
+    SET_LOADING(state, val) {
+      Vue.set(state, "isLoading", val);
+    },
+    SET_OVERLAY(state, val) {
+      Vue.set(state, "isOverlay", val);
+    },
+    SET_SEARCH_VALUE(state, val) {
+      Vue.set(state, "searchValue", val);
     },
   },
 });
