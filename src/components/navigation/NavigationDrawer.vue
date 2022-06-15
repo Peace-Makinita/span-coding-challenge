@@ -21,14 +21,8 @@
 </template>
 
 <script>
-import ImageCover from "../common/ImageCover.vue";
-import { useStore } from "vuex";
-
 export default {
   name: "NavigationDrawer",
-  components: {
-    ImageCover,
-  },
   props: {
     openNavigation: {
       type: Boolean,
@@ -38,10 +32,6 @@ export default {
   data() {
     return {
       drawer: null,
-      items: [
-        { title: "Home", icon: "mdi-view-dashboard" },
-        { title: "About", icon: "mdi-forum" },
-      ],
     };
   },
 

@@ -1,15 +1,19 @@
 <template>
   <v-sheet class="mx-auto" elevation="8" max-width="100%">
+    <p class="Heading 5 mt-6 pt-6 pl-10 mb-0 font-weight-bold">
+      {{ category }}
+    </p>
+    <p class="pl-10">{{ description }}</p>
     <v-slide-group v-model="model" class="pa-4" center-active show-arrows>
       <v-slide-item
-        v-for="item in imageList"
-        :key="item.id"
+        v-for="imageUrl in imageItems"
+        :key="imageUrl"
         v-slot="{ active, toggle }"
       >
         <v-card class="ma-4" height="200" width="200" @click="toggle">
           <v-img
-            :src="item.url"
-            :lazy-src="item.url"
+            :src="imageUrl"
+            :lazy-src="imageUrl"
             :class="active ? 'set-active-border' : ''"
             class="mr-5"
             height="200"
@@ -23,86 +27,58 @@
 
 <script>
 export default {
+  props: {
+    category: {
+      type: String,
+      default: "",
+    },
+    description: {
+      type: String,
+      default: "",
+    },
+  },
   data: () => ({
     model: null,
     show: false,
     isSelected: false,
     activeItem: null,
-    imageList: [
-      {
-        id: 1,
-        url: "https://source.unsplash.com/random/200x200?sig=1",
-      },
-      {
-        id: 2,
-        url: "https://source.unsplash.com/random/200x200?sig=2",
-      },
-      {
-        id: 3,
-        url: "https://source.unsplash.com/random/200x200?sig=3",
-      },
-      {
-        id: 4,
-        url: "https://source.unsplash.com/random/200x200?sig=4",
-      },
-      {
-        id: 5,
-        url: "https://source.unsplash.com/random/200x200?sig=5",
-      },
-      {
-        id: 6,
-        url: "https://source.unsplash.com/random/200x200?sig=6",
-      },
-      {
-        id: 7,
-        url: "https://source.unsplash.com/random/200x200?sig=7",
-      },
-      {
-        id: 8,
-        url: "https://source.unsplash.com/random/200x200?sig=8",
-      },
-      {
-        id: 9,
-        url: "https://source.unsplash.com/random/200x200?sig=9",
-      },
-      {
-        id: 20,
-        url: "https://source.unsplash.com/random/200x200?sig=10",
-      },
-      {
-        id: 10,
-        url: "https://source.unsplash.com/random/200x200?sig=11",
-      },
-      {
-        id: 11,
-        url: "https://source.unsplash.com/random/200x200?sig=12",
-      },
-      {
-        id: 12,
-        url: "https://source.unsplash.com/random/200x200?sig=13",
-      },
-      {
-        id: 13,
-        url: "https://source.unsplash.com/random/200x200?sig=14",
-      },
-      {
-        id: 14,
-        url: "https://source.unsplash.com/random/200x200?sig=15",
-      },
-      {
-        id: 15,
-        url: "https://source.unsplash.com/random/200x200?sig=16",
-      },
-      {
-        id: 16,
-        url: "https://source.unsplash.com/random/200x200?sig=17",
-      },
-      {
-        id: 17,
-        url: "https://source.unsplash.com/random/200x200?sig=18",
-      },
-    ],
+    topicName: "digital-nomad",
+    imageItems: [],
+    errorMessage: "",
   }),
+  async created() {
+    try {
+      const response = await this.$store.dispatch(
+        "fetchPhotos",
+        !this.setSearchValue.length ? this.topicName : this.setSearchValue
+      );
+      let newImageItems = [];
+      // console.log("response", response);
+      if (response) {
+        for (let i = 0; i < response.length; i++) {
+          const imageUrl = response[i]?.urls?.regular;
+          newImageItems.push(imageUrl);
+          this.imageItems = newImageItems;
+          // console.log("urls", response[i].urls.regular);
+        }
+      }
+
+      if (!response.length) {
+        this.imageItems = [];
+        return;
+      }
+    } catch (error) {
+      console.log("error in components", error);
+    }
+  },
+  computed: {
+    getImageList() {
+      return this.$store.state.photos;
+    },
+    setSearchValue() {
+      return this.$store.getters.getSearchValue;
+    },
+  },
 };
 </script>
 
@@ -116,5 +92,10 @@ export default {
 
 .set-active-border {
   border: 3px solid orange;
+}
+
+.topic-name {
+  font-size: 1rem;
+  font-weight: 500;
 }
 </style>

@@ -1,19 +1,21 @@
 <template>
-  <v-toolbar>
-    <v-autocomplete
-      v-model="select"
-      :loading="loading"
-      :items="items"
-      :search-input.sync="search"
-      cache-items
-      class="mx-4"
-      flat
-      hide-no-data
-      hide-details
-      label="Search for topic names you are interested in"
-      solo-inverted
-    ></v-autocomplete>
-  </v-toolbar>
+  <v-container>
+    <v-row>
+      <v-col cols="12" sm="6" md="4">
+        <v-text-field
+          v-model="search"
+          append-icon="mdi-magnify"
+          single-line
+          dense
+          placeholder="Search for topics you find interesting..."
+        ></v-text-field>
+        <p class="search-keys">
+          <b>search keys for demo purposes:</b> current-events, wallpapers,
+          3d-renders, experimental
+        </p>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -24,85 +26,27 @@ export default {
       items: [],
       search: null,
       select: null,
-      states: [
-        "Alabama",
-        "Alaska",
-        "American Samoa",
-        "Arizona",
-        "Arkansas",
-        "California",
-        "Colorado",
-        "Connecticut",
-        "Delaware",
-        "District of Columbia",
-        "Federated States of Micronesia",
-        "Florida",
-        "Georgia",
-        "Guam",
-        "Hawaii",
-        "Idaho",
-        "Illinois",
-        "Indiana",
-        "Iowa",
-        "Kansas",
-        "Kentucky",
-        "Louisiana",
-        "Maine",
-        "Marshall Islands",
-        "Maryland",
-        "Massachusetts",
-        "Michigan",
-        "Minnesota",
-        "Mississippi",
-        "Missouri",
-        "Montana",
-        "Nebraska",
-        "Nevada",
-        "New Hampshire",
-        "New Jersey",
-        "New Mexico",
-        "New York",
-        "North Carolina",
-        "North Dakota",
-        "Northern Mariana Islands",
-        "Ohio",
-        "Oklahoma",
-        "Oregon",
-        "Palau",
-        "Pennsylvania",
-        "Puerto Rico",
-        "Rhode Island",
-        "South Carolina",
-        "South Dakota",
-        "Tennessee",
-        "Texas",
-        "Utah",
-        "Vermont",
-        "Virgin Island",
-        "Virginia",
-        "Washington",
-        "West Virginia",
-        "Wisconsin",
-        "Wyoming",
-      ],
     };
   },
-  watch: {
-    search(val) {
-      val && val !== this.select && this.querySelections(val);
+  computed: {
+    setSearchValue() {
+      return this.$store.getters.getSearchValue;
     },
   },
-  methods: {
-    querySelections(v) {
-      this.loading = true;
-      // Simulated ajax query
-      setTimeout(() => {
-        this.items = this.states.filter((e) => {
-          return (e || "").toLowerCase().indexOf((v || "").toLowerCase()) > -1;
-        });
-        this.loading = false;
-      }, 500);
+  watch: {
+    setSearchValue(val) {
+      console.log("val", val);
+      if (val.length > 5) {
+        this.setSearchValue = val;
+      }
     },
   },
 };
 </script>
+
+<style scoped>
+.search-keys {
+  font-size: 0.8rem;
+  color: #b78484;
+}
+</style>
