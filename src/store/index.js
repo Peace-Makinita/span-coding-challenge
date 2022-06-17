@@ -3,15 +3,19 @@ import Vuex from "vuex";
 import axios from "axios";
 Vue.use(Vuex);
 
-const store = new Vuex.Store({
+export default new Vuex.Store({
   state: {
     topics: [],
     photos: [],
+    newPhotoList: [],
     isResponseOkay: false,
     infinityLoop: false,
     isLoading: false,
     isOverlay: false,
     searchValue: "",
+    setTopicName: "",
+    setDescription: "",
+    errorMessage: "",
   },
 
   getters: {
@@ -22,6 +26,11 @@ const store = new Vuex.Store({
     getIsLoading: (state) => state.isLoading,
     getIsOverlay: (state) => state.isOverlay,
     getSearchValue: (state) => state.searchValue,
+    getNewPhotoList: (state) => state.newPhotoList,
+    getComponentKey: (state) => state.componentKey,
+    getTopicName: (state) => state.setTopicName,
+    getDescription: (state) => state.setDescription,
+    getErrorMessage: (state) => state.errorMessage,
   },
 
   actions: {
@@ -76,16 +85,19 @@ const store = new Vuex.Store({
 
   mutations: {
     SET_TOPICS(state, topics) {
+      // Vue.set(state, "photos", val);
       state.topics = topics;
     },
     SET_RESPONSE_OKAY(state, isResponseOkay) {
       state.isResponseOkay = isResponseOkay;
     },
     SET_PHOTOS(state, photos) {
+      // state.photos.push(photos);
+      // // state.photos.push(photos);
       state.photos = photos;
     },
-    SET_INFINIT_LOOP(state, infinityLoop) {
-      state.infinityLoop = infinityLoop;
+    SET_NEW_PHOTO_LIST(state, newPhotoList) {
+      state.newPhotoList.push(newPhotoList);
     },
     SET_LOADING(state, val) {
       Vue.set(state, "isLoading", val);
@@ -98,5 +110,3 @@ const store = new Vuex.Store({
     },
   },
 });
-
-export default store;

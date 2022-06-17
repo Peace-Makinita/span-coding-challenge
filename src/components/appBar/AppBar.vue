@@ -6,15 +6,12 @@
         <v-toolbar-title>Span Coding Challenge</v-toolbar-title>
         <v-spacer></v-spacer>
       </v-app-bar>
-      <v-container v-if="!isLoading && !isOverlay" class="mt-15">
+      <v-container v-if="!isLoading" class="mt-15">
         <Search class="mt-16" />
         <Carousel
-          category="Animation"
-          description="Below are images with searched topics"
+          :category="setDefaultTopic"
+          :description="setDefaultDescription"
         />
-        <Carousel />
-        <Carousel />
-        <Carousel />
       </v-container>
       <NavigationDrawer ref="openNavigationRef" />
       <Loader />
@@ -39,30 +36,23 @@ export default {
   data: () => ({
     drawer: false,
   }),
-  mounted() {
-    let setState = this.$store.state;
-    setState.isLoading = true;
-    setState.isOverlay = true;
-    setTimeout(this.mockResponseTime, 2000);
-  },
   methods: {
     handleDrawer() {
       this.$refs.openNavigationRef.isDrawerShowing();
-    },
-    openNavigation(message) {
-      console.log("message from child", message);
-    },
-    mockResponseTime() {
-      this.$store.state.isLoading = false;
-      this.$store.state.isOverlay = false;
     },
   },
   computed: {
     isLoading() {
       return this.$store.getters.getIsLoading;
     },
-    isOverlay() {
-      return this.$store.getters.getIsOverlay;
+    setDefaultTopic() {
+      return this.$store.getters.getTopicName;
+    },
+    setDefaultDescription() {
+      return this.$store.getters.getDescription;
+    },
+    setErrorMessage() {
+      return this.$store.getters.getErrorMessage;
     },
   },
 };

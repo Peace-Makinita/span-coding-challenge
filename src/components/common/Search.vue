@@ -22,23 +22,20 @@
 export default {
   data() {
     return {
-      loading: false,
       items: [],
       search: null,
-      select: null,
     };
+  },
+  watch: {
+    search(val) {
+      if (val.length > 10) {
+        this.$store.state.searchValue = val;
+      }
+    },
   },
   computed: {
     setSearchValue() {
       return this.$store.getters.getSearchValue;
-    },
-  },
-  watch: {
-    setSearchValue(val) {
-      console.log("val", val);
-      if (val.length > 5) {
-        this.setSearchValue = val;
-      }
     },
   },
 };
