@@ -28,7 +28,7 @@ export default {
   },
   watch: {
     search(val) {
-      if (val.length > 10) {
+      if (val.length > 6) {
         this.$store.state.searchValue = val;
       }
     },
